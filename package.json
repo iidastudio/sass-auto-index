@@ -1,0 +1,18 @@
+{
+  "name": "sass-auto-index",
+  "version": "0.0.1",
+  "description": "create _index.scss This module. bunch up .scss file in a _index.scss. for dart-sass",
+  "main": "sass-auto-index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "dart-sass",
+    "sass",
+    "scss",
+    "@use",
+    "@forward"
+  ],
+  "author": "Takayuki Iida",
+  "license": "MIT"
+}
