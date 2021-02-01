@@ -12,74 +12,87 @@
 const fs = require('fs');
 const path = require('path');
 
-let fileNames = [];
-let childrenDirPath = [];
+class sassAutoIndex {
+  fileNames = [];
+  childrenDirPath = [];
 
-// 指定ディレクトリ内のディレクトリを読み込む関数
-const readTarget = (targetPath) => {
-  fs.readdir(targetPath, {withFileTypes: true}, (err, children) => {
-    // エラー処理
-    if (err) {
-      console.error('This Directory is undifind.');
-      return;
-    }
+  constructor () {}
 
-    // ディレクトリが空だったら終了
-    if (!children.length) {
-      console.log('some empty directory exists.');
-      return;
-    }
-
-    // ディレクトリなのかファイルなのかをチェックしてそれぞれを配列に入れる
-    for (const child of children) {
-
-      if (child.isFile() && targetPath !== process.argv[2] ) {
-        let filename = child.name.toLowerCase();
-        // もし_index.scss以外のアンダースコアから始まるscssファイルだったらアンダースコアと拡張子を削除
-        if( filename.match(/^_.*\.(scss)$/) && filename !== '_index.scss' ){
-          fileNames.push(filename.slice(1, -5));
-        }
-      } else if (child.isDirectory()) {
-        const childDirPath = path.join(targetPath, child.name);
-        childrenDirPath.push(childDirPath);
-
-        const inDir = fs.readdirSync(childDirPath);
-        if (targetPath !== process.argv[2] && inDir.length) {
-          fileNames.push(child.name);
+  readTarget = (targetPath) => {
+    fs.readdir(targetPath, {withFileTypes: true}, (err, children) => {
+      // エラー処理
+      if (err) {
+        console.error('This Directory is undifind.');
+        return;
+      }
+  
+      // ディレクトリが空だったら終了
+      if (!children.length) {
+        console.log('some empty directory exists.');
+        return;
+      } 
+  
+      for (const child of children) {
+  
+        if (child.isFile() && targetPath !== process.argv[2] ) {
+          let filename = child.name.toLowerCase();
+          // もし_index.scss以外のアンダースコアから始まるscssファイルだったらアンダースコアと拡張子を削除
+          if( (filename.match(/^_.*\.(scss)$/) || filename.match(/^_.*\.(sass)$/)) && filename !== '_index.scss' ){
+              this.fileNames.push(filename.slice(1, -5));
+          }
+        } else if (child.isDirectory()) {
+          const childDirPath = path.join(targetPath, child.name);
+          this.childrenDirPath.push(childDirPath);
+  
+          const inDir = fs.readdirSync(childDirPath);
+          if (targetPath !== process.argv[2] && inDir.length ) {
+            let isSass = false;
+            for( inDirFilename of inDir ){
+              if( (inDirFilename.match(/^_.*\.(scss)$/) || inDirFilename.match(/^_.*\.(sass)$/)) && inDirFilename !== '_index.scss' ){
+                isSass = true;
+                break;
+              }
+            }
+            if(isSass) {
+              this.fileNames.push(child.name);
+            } else {
+              console.log('There is no sass in some directory.');
+            }
+          }
         }
       }
-    }
-
-    // ディレクトリ内のファイル名を_index.scss作成関数に渡して実行
-    if (fileNames.length) {
-        makeIndex(fileNames, targetPath);
-        fileNames = [];
-    }
-
-    // ディレクトリ内にあったディレクトリをもう一度同じ処理
-    if (childrenDirPath.length) {
-      for(const childDirPath of childrenDirPath) {
-          readTarget(childDirPath);
+  
+      // ディレクトリ内のファイル名を_index.scss作成関数に渡して実行
+      if (this.fileNames.length) {
+          this.makeIndex(this.fileNames, targetPath);
+          this.fileNames = [];
       }
-      // １つのディレクトリを取得したら空にしないと溜まり続けて終わらなくなる
-      childrenDirPath = [];
-    }
-    return;
-  });
-}
-
-// _index.scssを作成
-const makeIndex = (fileNames, dirPath) => {
-  const forwardName = [];
-  for(const fileName of fileNames) {
-    forwardName.push(`@forward '${fileName}';`);
+  
+      // ディレクトリ内にあったディレクトリをもう一度同じ処理
+      if (this.childrenDirPath.length) {
+        for(const childDirPath of this.childrenDirPath) {
+            this.readTarget(childDirPath);
+        }
+        // １つのディレクトリを取得したら空にしないと溜まり続けて終わらなくなる
+        this.childrenDirPath = [];
+      }
+      return;
+    });
   }
-  const str = forwardName.join('\n');
-  fs.writeFile(`${dirPath}/_index.scss`, str, (err) => {
-    if(err) {
-      console.log(err);
+
+  makeIndex = (fileNames, dirPath) => {
+    const forwardName = [];
+    for(const fileName of fileNames) {
+      forwardName.push(`@forward '${fileName}';`);
     }
-  });
+    const str = forwardName.join('\n');
+    fs.writeFile(`${dirPath}/_index.scss`, str, (err) => {
+      if(err) {
+        console.log(err);
+      }
+    });
+  }
 }
 
-readTarget(process.argv[2]);
+const sai = new sassAutoIndex();
+module.exports = sai;
