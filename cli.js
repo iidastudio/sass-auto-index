@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 'use strict';
 
-const sai = require('./sass-auto-index');
+const sai = require('./index');
 sai.readTarget(process.argv[2]);
