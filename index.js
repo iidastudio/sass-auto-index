@@ -33,7 +33,7 @@ class sassAutoIndex {
           const inDir = fs.readdirSync(childDirPath);
           if (targetPath !== process.argv[2] && inDir.length ) {
             let isSass = false;
-            for( inDirFilename of inDir ){
+            for( const inDirFilename of inDir ){
               if( (inDirFilename.match(/^_.*\.(scss)$/) || inDirFilename.match(/^_.*\.(sass)$/)) && inDirFilename !== '_index.scss' ){
                 isSass = true;
                 break;
