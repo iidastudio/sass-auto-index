@@ -1,8 +1,8 @@
+'use strict';
+
 const chokidar = require('chokidar');
 const sai = require('./index');
-// sai.readTarget(process.argv[2]);
 
-// console.log(process.argv[2]);
 let watch;
 const argArray = process.argv.slice(2);
 
