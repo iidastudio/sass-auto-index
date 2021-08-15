@@ -16,8 +16,6 @@ argArray.forEach(arg => {
   }
 });
 
-console.log(argArray);
-
 if(watch === true) {
   chokidar.watch(argArray, {ignored: [/[\/\\]\./, /._index\.scss/]})
   .on('add', (path) => {
