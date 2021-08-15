@@ -23,5 +23,7 @@
   ],
   "author": "Takayuki Iida",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "chokidar": "^3.5.2"
+  }
 }
