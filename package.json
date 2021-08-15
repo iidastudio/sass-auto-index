@@ -18,8 +18,8 @@
     "dart-sass",
     "sass",
     "scss",
-    "@use",
-    "@forward"
+    "use",
+    "forward"
   ],
   "author": "Takayuki Iida",
   "license": "MIT",
