@@ -4,10 +4,20 @@ This module for dart-sass.
 create some _index.scss by scanning in the specified directory.
 Automatically write @forward in _index.scss.
 
-It can be use on npm scripts.
+
+
+## use on npm scripts.
 
 watch mode: -w --watch
-ex) sass-auto-index targetDir -w
 
-notice: If you “watch" file and directory, you need using ignore for avoid loops.
-ex) "chokidar './src/assets/scss/' -c 'npm run css' -i /._index\.scss/ --initial"
+```json
+ "sass-auto-index":"chokidar './src/assets/scss/' -c 'npm run css' -i '/.*_index\\.scss/' --initial"
+```
+
+If you are using an existing module to “watch" files and directories,  you need using ignore for avoid loops.
+(sass-auto-index uses chokidar internally.)
+
+```json
+ "sass-auto-index":"chokidar './src/assets/scss/' -c 'npm run css' -i '/.*_index\\.scss/' --initial"
+```
+
